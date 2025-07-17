@@ -44,4 +44,8 @@ body {
     background-color: var(--slight-white-color);
 }
 
+.checker:checked{
+    background-color: #748873 !important;
+}
+
 

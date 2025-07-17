@@ -7,19 +7,31 @@ import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import Link from 'next/link'
 import { Label } from '@radix-ui/react-label'
 
+import '../../../styles/custom.css';
+
 export default function RegisterPage() {
+
+  const [passwordValid, setPasswordValid] = useState(false);
+
   const [form, setForm] = useState({
     name: '',
     email: '',
     password: '',
+    confirmPassword: '',
   })
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value })
-  }
+    const { name, value } = e.target;
+    const updatedForm = { ...form, [name]: value };
+    setForm(updatedForm);
+
+    if (name === "password" || name === "confirmPassword") {
+      updatePasswordRules(updatedForm.password, updatedForm.confirmPassword);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -37,11 +49,45 @@ export default function RegisterPage() {
     }
   }
 
+  const [rules, setRules] = useState({
+    upper: false,
+    lower: false,
+    number: false,
+    special: false,
+    length: false,
+    same: false,
+  });
+
+
+  const updatePasswordRules = (password: string, confirmPassword: string) => {
+    setRules({
+      upper: /[A-Z]/.test(password),
+      lower: /[a-z]/.test(password),
+      number: /\d/.test(password),
+      special: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+      length: password.length >= 8,
+      same: password === confirmPassword
+    });
+    setPasswordValid(
+      /[A-Z]/.test(password) &&
+      /[a-z]/.test(password) &&
+      /\d/.test(password) &&
+      /[!@#$%^&*(),.?":{}|<>]/.test(password) &&
+      password.length >= 8
+    );
+
+  };
+
+
+
   return (
     <div className="min-h-screen flex items-center justify-center px-4 bg-green">
       <Card className="w-full max-w-7xl grid grid-cols-1 md:grid-cols-2 overflow-hidden p-10">
         {/* Left - Features */}
         <div className="bg-green text-white p-8 flex flex-col justify-center space-y-4">
+             <div className="justify-left flex mb-3 ">
+          <img src="/logos/3.png" alt="Icon" className="w-16 h-16 rounded  " />
+        </div>
           <h2 className="text-3xl font-bold">Welcome to Kanvas</h2>
           <p className="text-lg">
             Build and customize dashboards visually — no code needed.
@@ -103,12 +149,41 @@ export default function RegisterPage() {
             <p className="mb-1 text-sm text-muted-foreground">
               Make sure your password contains:
             </p>
-            <ul className="list-disc list-inside text-sm text-muted-foreground space-y-0.5">
-              <li>At least 1 uppercase letter</li>
-              <li>At least 1 lowercase letter</li>
-              <li>At least 1 number</li>
-              <li>At least 1 special character (e.g. !@#$%^&*)</li>
-              <li>Minimum of 8 characters</li>
+            <ul className="list-disc list-inside text-sm space-y-0.5">
+              <li className={rules.upper ? "text-green-600" : "text-muted-foreground"}>
+                At least 1 uppercase letter
+              </li>
+              <li className={rules.lower ? "text-green-600" : "text-muted-foreground"}>
+                At least 1 lowercase letter
+              </li>
+              <li className={rules.number ? "text-green-600" : "text-muted-foreground"}>
+                At least 1 number
+              </li>
+              <li className={rules.special ? "text-green-600" : "text-muted-foreground"}>
+                At least 1 special character
+              </li>
+              <li className={rules.length ? "text-green-600" : "text-muted-foreground"}>
+                Minimum of 8 characters
+              </li>
+            </ul>
+
+            <Label
+              className='mb-2 p-1 text-sm'>
+              Confirm Password
+            </Label>
+            <Input
+              name="confirmPassword"
+              type="password"
+              placeholder="Re-enter your password here"
+              value={form.confirmPassword}
+              onChange={handleChange}
+              required
+            />
+
+            <ul className="list-disc list-inside text-sm space-y-0.5">
+              <li className={rules.same ? "text-green-600" : "text-muted-foreground"}>
+                The password is the same
+              </li>
             </ul>
 
             <Label
@@ -132,13 +207,12 @@ export default function RegisterPage() {
                 name="terms"
                 id="terms"
                 required
-                className="h-4 w-4 border-gray-300 rounded text-primary focus:ring-2 focus:ring-primary"
+                className="h-4 w-4 border-gray-300 rounded text-primary focus:ring-2 focus:ring-primary accent-[#748873]"
               />
               <label htmlFor="terms" className="text-sm text-muted-foreground">
                 I agree to the <a href="/terms" className="underline text-primary">Terms and Conditions</a>
               </label>
             </div>
-
             {error && <p className="text-sm text-red-500">{error}</p>}
           </CardContent>
 

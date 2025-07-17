@@ -6,14 +6,14 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import Link from 'next/link'
 
-
-
 export default function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center px-4 bg-green">
       <div className="w-full max-w-md rounded-xl bg-white p-8 shadow-xl">
+        <div className="justify-center flex mb-3 ">
+          <img src="/logos/1.png" alt="Icon" className="w-16 h-16 rounded  " />
+        </div>
         <h1 className="mb-6 text-2xl font-bold text-center">Login to Kanvas</h1>
-
         <form className="space-y-5">
           <div>
             <Label htmlFor="email">Email</Label>
